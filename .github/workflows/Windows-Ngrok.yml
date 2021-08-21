@@ -1,4 +1,4 @@
-name: Windows (Ngrok RDP)
+name: Windows (Ngrok RDPiz)
 
 on: 
   workflow_dispatch:
@@ -37,9 +37,9 @@ jobs:
     - name: Download Ngrok & NSSM
       run: |
         Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
-        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDP/main/Files/nssm.exe -OutFile nssm.exe
-        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDP/main/NGROK-Setup.bat -OutFile NGROK-Setup.bat
-        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDP/main/Files/t.bat -OutFile t.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDPiz/main/Files/nssm.exe -OutFile nssm.exe
+        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDPiz/main/NGROK-Setup.bat -OutFile NGROK-Setup.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDPiz/main/Files/t.bat -OutFile t.bat
         Expand-Archive ngrok.zip
     - name: Copy NSSM & Ngrok to Windows Directory.
       run: | 
@@ -49,16 +49,16 @@ jobs:
       run: .\ngrok\ngrok.exe authtoken ${{ env.NGROK_TOKEN }}
     - name: Download Important Files & Make YML file for NGROK.
       run: |
-        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDP/main/NGROK-RG.bat -OutFile NGROK-RG.bat
+        Invoke-WebRequest https://raw.githubusercontent.com/danwar8/RDPiz/main/NGROK-RG.bat -OutFile NGROK-RG.bat
         start NGROK-RG.bat "${{ github.event.inputs.tunnelservers }}"
-    - name: Enable RDP Access.
+    - name: Enable RDPiz Access.
       run: | 
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+        Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDPiz-Tcp' -name "UserAuthentication" -Value 1
     - name: Create Tunnel
       run: sc start ngrok
-    - name: Account for Connect to your RDP.
+    - name: Account for Connect to your RDPiz.
       run: cmd /c NGROK-Setup.bat `${{ env.Password }}
     - name: Keep Alive.
       shell: bash
